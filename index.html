@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Site People Function — Responsibility Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --concrete:#F5F6F4;
+    --surface:#FFFFFF;
+    --ink:#16201D;
+    --muted:#697470;
+    --hair:#DCE0DC;
+    --hair-strong:#C7CDC8;
+    --teal:#123F37;       /* structural dark */
+    --teal-soft:#1C5448;
+    --amber:#E6A100;      /* hi-vis signature accent */
+    --amber-tint:#FBEFCE;
+    --focus:#1C5448;
+    --shadow:0 1px 2px rgba(18,32,29,.05), 0 8px 24px rgba(18,32,29,.06);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--concrete);
+    color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    background:var(--teal);
+    color:#EAF1EE;
+    padding:34px 28px 30px;
+    border-bottom:3px solid var(--amber);
+  }
+  .masthead-inner{max-width:1180px;margin:0 auto;}
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin:0 0 12px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{
+    content:"";width:26px;height:2px;background:var(--amber);display:inline-block;
+  }
+  .masthead h1{
+    font-family:"Space Grotesk",sans-serif;
+    font-weight:700;
+    font-size:clamp(26px,4vw,40px);
+    line-height:1.05;
+    letter-spacing:-.02em;
+    margin:0 0 10px;
+    max-width:20ch;
+  }
+  .masthead p{
+    margin:0;
+    color:#B7C7C1;
+    max-width:62ch;
+    font-size:15px;
+  }
+  .stats{
+    display:flex;flex-wrap:wrap;gap:30px;margin-top:24px;
+  }
+  .stat{display:flex;flex-direction:column;gap:2px;}
+  .stat .n{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:26px;font-weight:600;color:#fff;line-height:1;
+  }
+  .stat .l{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#90A8A0;
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    position:sticky;top:0;z-index:20;
+    background:rgba(245,246,244,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--hair);
+    padding:12px 28px;
+  }
+  .toolbar-inner{
+    max-width:1180px;margin:0 auto;
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  }
+  .search{
+    flex:1;min-width:220px;position:relative;
+  }
+  .search input{
+    width:100%;
+    font-family:"Inter",sans-serif;font-size:14px;
+    padding:10px 14px 10px 38px;
+    border:1px solid var(--hair-strong);
+    border-radius:8px;background:var(--surface);color:var(--ink);
+  }
+  .search input::placeholder{color:#9AA39F;}
+  .search input:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:var(--focus);}
+  .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9AA39F;}
+  .tbtn{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.04em;
+    padding:10px 14px;border:1px solid var(--hair-strong);border-radius:8px;
+    background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap;
+  }
+  .tbtn:hover{border-color:var(--teal);color:var(--teal);}
+  .tbtn:focus-visible{outline:2px solid var(--focus);outline-offset:1px;}
+
+  /* ---------- Layout ---------- */
+  .wrap{
+    max-width:1180px;margin:0 auto;padding:28px;
+    display:grid;grid-template-columns:288px 1fr;gap:28px;align-items:start;
+  }
+
+  /* ---------- Domain rail ---------- */
+  .rail{position:sticky;top:74px;}
+  .rail-label{
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 10px 4px;
+  }
+  .rail-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;}
+  .rail-item{
+    display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+    padding:9px 11px;border:0;background:transparent;border-radius:8px;cursor:pointer;
+    font-family:"Inter",sans-serif;font-size:13.5px;color:var(--ink);
+    border-left:3px solid transparent;transition:background .12s;
+  }
+  .rail-item:hover{background:#ECEFEC;}
+  .rail-item:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;}
+  .rail-item .code{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;
+    color:var(--muted);min-width:26px;
+  }
+  .rail-item .name{flex:1;line-height:1.25;}
+  .rail-item .cnt{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);
+  }
+  .rail-item[aria-current="true"]{
+    background:var(--surface);border-left-color:var(--amber);
+    box-shadow:var(--shadow);font-weight:600;
+  }
+  .rail-item[aria-current="true"] .code{color:var(--amber);}
+
+  /* ---------- Detail panel ---------- */
+  .panel{min-height:60vh;}
+  .panel-head{
+    display:flex;align-items:flex-start;gap:16px;margin-bottom:6px;
+  }
+  .domain-code{
+    font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13px;
+    color:var(--teal);background:var(--amber-tint);border:1px solid #EAD9A0;
+    padding:6px 9px;border-radius:7px;line-height:1;margin-top:6px;
+  }
+  .panel-head h2{
+    font-family:"Space Grotesk",sans-serif;font-weight:600;
+    font-size:clamp(22px,3vw,30px);letter-spacing:-.015em;margin:0;line-height:1.1;
+  }
+  .panel-desc{color:var(--muted);max-width:64ch;margin:8px 0 22px;font-size:14.5px;}
+  .panel-meta{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 14px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .panel-meta::after{content:"";flex:1;height:1px;background:var(--hair);}
+
+  .tasks{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
+  .task{
+    background:var(--surface);border:1px solid var(--hair);border-radius:10px;
+    padding:14px 16px;display:flex;gap:13px;align-items:flex-start;
+    box-shadow:var(--shadow);
+  }
+  .task .marker{
+    width:8px;height:8px;border-radius:50%;background:var(--amber);
+    margin-top:7px;flex-shrink:0;
+  }
+  .task .t-body strong{
+    display:block;font-weight:600;font-size:14.5px;margin-bottom:2px;
+    font-family:"Space Grotesk",sans-serif;letter-spacing:-.005em;
+  }
+  .task .t-body span{color:var(--muted);font-size:13.5px;}
+
+  /* search results view */
+  .result-domain{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;
+    color:var(--teal);text-transform:uppercase;margin-top:2px;
+  }
+  mark{background:var(--amber-tint);color:var(--ink);padding:0 2px;border-radius:3px;}
+
+  .empty{
+    text-align:center;color:var(--muted);padding:60px 20px;
+    font-family:"Space Grotesk",sans-serif;
+  }
+
+  .footer{
+    max-width:1180px;margin:0 auto;padding:30px 28px 50px;
+    color:var(--muted);font-size:12.5px;border-top:1px solid var(--hair);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .footer .mono{font-family:"IBM Plex Mono",monospace;letter-spacing:.04em;}
+
+  /* ---------- Mobile ---------- */
+  @media (max-width:860px){
+    .wrap{grid-template-columns:1fr;padding:20px;gap:18px;}
+    .rail{position:static;}
+    .rail-list{
+      flex-direction:row;overflow-x:auto;gap:7px;padding-bottom:6px;
+      scrollbar-width:thin;
+    }
+    .rail-item{flex:0 0 auto;border-left:0;border-bottom:3px solid transparent;
+      border-radius:8px 8px 0 0;padding:9px 13px;}
+    .rail-item[aria-current="true"]{border-left:0;border-bottom-color:var(--amber);}
+    .rail-item .name{white-space:nowrap;}
+    .masthead{padding:26px 20px 24px;}
+    .toolbar{padding:10px 20px;}
+    .stats{gap:22px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto;}}
+
+  @media print{
+    .toolbar,.rail,.masthead p,.stats{display:none;}
+    .wrap{display:block;}
+    .task{break-inside:avoid;box-shadow:none;}
+    body{background:#fff;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow">Senior People Manager · Fulfillment Site</p>
+    <h1>The People Function Responsibility Map</h1>
+    <p>The full scope carried by the senior HR leader of a high-volume fulfillment and distribution operation, organized into functional domains. Select a domain to drill into its responsibilities, or search across the whole portfolio.</p>
+    <div class="stats">
+      <div class="stat"><span class="n" id="stat-domains">0</span><span class="l">Domains</span></div>
+      <div class="stat"><span class="n" id="stat-items">0</span><span class="l">Responsibilities</span></div>
+      <div class="stat"><span class="n">24/7</span><span class="l">Shift Coverage</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search" type="search" placeholder="Search responsibilities across all domains…" aria-label="Search responsibilities" />
+    </div>
+    <button class="tbtn" id="btn-print">Print / Export</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <nav class="rail" aria-label="Functional domains">
+    <p class="rail-label">Functional Domains</p>
+    <ul class="rail-list" id="rail"></ul>
+  </nav>
+
+  <section class="panel" id="panel" aria-live="polite"></section>
+</main>
+
+<footer class="footer">
+  <span>People Function Responsibility Map · a working reference for site HR leadership</span>
+  <span class="mono" id="foot-count"></span>
+</footer>
+
+<script>
+/* ------------------------------------------------------------------
+   Data: functional domains and the responsibilities under each.
+   Generic to any large fulfillment / distribution operation.
+------------------------------------------------------------------ */
+const DOMAINS = [
+  {
+    code:"WP", name:"Workforce Planning & Staffing",
+    desc:"Sizing and shaping the labor force against fluctuating volume, from steady state through peak ramp and post-peak drawdown.",
+    items:[
+      ["Headcount forecasting","Modeling labor demand against volume projections, including the seasonal peak ramp and the post-peak reduction."],
+      ["Flexible labor planning","Balancing full-time, part-time, seasonal, and temporary associate populations to match demand curves."],
+      ["Staffing pipeline partnership","Coordinating with external staffing agencies and internal seasonal hiring channels to fill the funnel."],
+      ["Shift bid management","Allocating labor across day, night, weekend, and overnight shift patterns."],
+      ["Span-of-control modeling","Setting leader-to-associate ratios for process leads, area managers, and operations managers."],
+      ["Attrition & backfill planning","Forecasting turnover and pre-staging backfill so critical lines stay covered."]
+    ]
+  },
+  {
+    code:"TA", name:"Talent Acquisition & Onboarding",
+    desc:"Moving people from applicant to productive associate at high volume, often hundreds or thousands of hires per site.",
+    items:[
+      ["High-volume hourly recruitment","Sourcing and hiring the hourly associate workforce at the scale the site demands."],
+      ["New hire orientation","Owning the Day-1 experience and the first-week orientation that sets expectations."],
+      ["Pre-employment processing","Background checks, screening, and work-authorization / I-9 verification."],
+      ["Access & equipment provisioning","Coordinating badges, systems access, and equipment so new hires can start on time."],
+      ["Ramp-to-productivity tracking","Measuring how quickly new associates reach expected performance and acting on gaps."]
+    ]
+  },
+  {
+    code:"ER", name:"Employee Relations",
+    desc:"The day-to-day work of keeping the workforce treated fairly, consistently, and within policy.",
+    items:[
+      ["Complaint & grievance handling","Investigating and resolving associate complaints, grievances, and ethics-line reports."],
+      ["Conflict mediation","Defusing disputes between associates and frontline leadership before they escalate."],
+      ["Policy interpretation","Applying site policy consistently across every area and every shift."],
+      ["Corrective action process","Owning the disciplinary and progressive-corrective-action framework."],
+      ["Termination review & risk","Reviewing separations for fairness, documentation, and legal exposure."],
+      ["Open-door & escalation","Running the open-door and escalation pathways that give associates a voice."]
+    ]
+  },
+  {
+    code:"PP", name:"Performance & Productivity Management",
+    desc:"Helping leaders manage rate and quality fairly, with documentation that holds up.",
+    items:[
+      ["Performance framework oversight","Stewarding the rate- and quality-based performance management system."],
+      ["Documentation coaching","Coaching leaders on documentation standards and progressive discipline."],
+      ["Expectation calibration","Calibrating performance expectations consistently across areas and shifts."],
+      ["Performance-based separations","Supporting productivity-related separations within legal guardrails."]
+    ]
+  },
+  {
+    code:"CB", name:"Compensation & Benefits",
+    desc:"Site-level stewardship of pay, premiums, leave, and the benefits associates actually use.",
+    items:[
+      ["Wage competitiveness monitoring","Tracking local market pay and escalating signals that affect retention."],
+      ["Premium & differential pay","Administering shift differentials and premium-pay programs."],
+      ["Benefits education & enrollment","Helping associates understand and enroll in their benefits."],
+      ["Leave & accommodation cases","Overseeing leave of absence and accommodation cases under disability and family-leave law."],
+      ["Workers' compensation coordination","Partnering with safety and claims teams on work-injury cases."]
+    ]
+  },
+  {
+    code:"CR", name:"Compliance & Risk",
+    desc:"Keeping the site on the right side of an ever-shifting body of federal, state, and local law.",
+    items:[
+      ["Wage-and-hour compliance","Adherence to overtime, minimum-wage, and meal- and rest-break requirements."],
+      ["Recordkeeping & audit readiness","Maintaining records and staying ready for internal and external audit."],
+      ["Positive employee relations posture","Maintaining lawful, consistent practices and labor-relations awareness."],
+      ["Equal employment opportunity","Owning EEO compliance and the handling of discrimination complaints."],
+      ["Pay transparency & posting","Meeting jurisdiction-specific pay-transparency and workplace-posting rules."]
+    ]
+  },
+  {
+    code:"SW", name:"Safety & Wellbeing",
+    desc:"The people side of a physically demanding environment, in partnership with the safety function.",
+    items:[
+      ["Safety culture support","Reinforcing safety culture and following through on incident outcomes."],
+      ["Return-to-work coordination","Managing modified-duty and return-to-work plans after injury."],
+      ["Wellbeing & mental health access","Connecting associates to mental-health resources and crisis support."],
+      ["Ergonomics & fatigue factors","Addressing heat, ergonomics, and fatigue as workforce considerations."]
+    ]
+  },
+  {
+    code:"EC", name:"Engagement, Culture & Retention",
+    desc:"Understanding why people stay or leave, and acting on it.",
+    items:[
+      ["Engagement survey & action planning","Running engagement surveys and converting results into action plans."],
+      ["Recognition programs","Executing recognition that reinforces the behaviors the site needs."],
+      ["Retention & root-cause analysis","Running stay interviews and digging into the real drivers of attrition."],
+      ["Voice-of-the-associate forums","Hosting roundtables and forums that surface frontline concerns."],
+      ["Inclusion programming","Leading site-level diversity, equity, and inclusion efforts."]
+    ]
+  },
+  {
+    code:"LD", name:"Leadership Development & Team Management",
+    desc:"Building the HR team and the broader leadership bench that runs the floor.",
+    items:[
+      ["HR team management","Directly leading the site HR business partners, coordinators, and assistants."],
+      ["Leader capability building","Coaching area and operations managers on people leadership."],
+      ["Succession & promotion pipelines","Building internal pathways from associate to lead to manager."],
+      ["HR staff performance management","Managing the performance and development of the HR team itself."]
+    ]
+  },
+  {
+    code:"OS", name:"HR Operations & Systems",
+    desc:"The data, systems, and reporting backbone the whole function depends on.",
+    items:[
+      ["Timekeeping & attendance","Overseeing the timekeeping and attendance-policy administration."],
+      ["HRIS data integrity","Keeping people data clean and accurate across HR and time systems."],
+      ["Payroll input accuracy","Ensuring payroll inputs and exceptions are handled correctly."],
+      ["People analytics & reporting","Building the dashboards and reporting that site leadership relies on."],
+      ["Records & data privacy","Managing records retention and the privacy of associate data."]
+    ]
+  },
+  {
+    code:"LS", name:"Labor & Scheduling Coordination",
+    desc:"Matching the right number of people to the work, hour by hour and day by day.",
+    items:[
+      ["Voluntary time-off / extra-time","Administering voluntary time-off and voluntary extra-time programs."],
+      ["Peak overtime planning","Planning mandatory and voluntary overtime through the peak period."],
+      ["Attendance policy enforcement","Applying the points- or policy-based attendance system fairly."],
+      ["Accommodation scheduling","Building schedules that honor approved accommodations."]
+    ]
+  },
+  {
+    code:"XF", name:"Cross-Functional Partnership",
+    desc:"The relationships that let HR move with, not against, the rest of the operation.",
+    items:[
+      ["Site leadership partnership","Partnering daily with the site general manager and operations team."],
+      ["Regional & corporate HR alignment","Coordinating with the regional and corporate people organization."],
+      ["Functional interfaces","Working across legal, loss prevention, safety, finance, and staffing."],
+      ["Community & workforce relations","Maintaining local workforce and community relationships."]
+    ]
+  },
+  {
+    code:"CC", name:"Crisis & Continuity",
+    desc:"Being ready for the day the operation is anything but normal.",
+    items:[
+      ["Incident response","Leading the people response to workplace violence, medical emergencies, and severe weather."],
+      ["Business continuity communication","Running emergency communication to the workforce when continuity is at risk."],
+      ["Reduction-in-force execution","Executing severance and workforce reductions when directed, with care and compliance."]
+    ]
+  }
+];
+
+/* ------------------------------------------------------------------ */
+const totalItems = DOMAINS.reduce((s,d)=>s+d.items.length,0);
+document.getElementById("stat-domains").textContent = DOMAINS.length;
+document.getElementById("stat-items").textContent = totalItems;
+document.getElementById("foot-count").textContent =
+  DOMAINS.length + " domains · " + totalItems + " responsibilities";
+
+const rail = document.getElementById("rail");
+const panel = document.getElementById("panel");
+const search = document.getElementById("search");
+let active = 0;
+
+/* build rail */
+DOMAINS.forEach((d,i)=>{
+  const li = document.createElement("li");
+  const btn = document.createElement("button");
+  btn.className = "rail-item";
+  btn.setAttribute("role","tab");
+  btn.innerHTML =
+    '<span class="code">'+d.code+'</span>'+
+    '<span class="name">'+d.name+'</span>'+
+    '<span class="cnt">'+d.items.length+'</span>';
+  btn.addEventListener("click",()=>{ search.value=""; select(i); });
+  li.appendChild(btn);
+  rail.appendChild(li);
+});
+
+function renderDomain(i){
+  const d = DOMAINS[i];
+  panel.innerHTML =
+    '<div class="panel-head">'+
+      '<span class="domain-code">'+d.code+'</span>'+
+      '<h2>'+d.name+'</h2>'+
+    '</div>'+
+    '<p class="panel-desc">'+d.desc+'</p>'+
+    '<p class="panel-meta">'+d.items.length+' Responsibilities</p>'+
+    '<ul class="tasks">'+
+      d.items.map(it=>
+        '<li class="task"><span class="marker" aria-hidden="true"></span>'+
+        '<div class="t-body"><strong>'+it[0]+'</strong><span>'+it[1]+'</span></div></li>'
+      ).join("")+
+    '</ul>';
+}
+
+function select(i){
+  active = i;
+  [...rail.querySelectorAll(".rail-item")].forEach((b,bi)=>
+    b.setAttribute("aria-current", bi===i ? "true":"false"));
+  renderDomain(i);
+}
+
+/* search across all domains */
+function esc(s){return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}
+function hl(text,q){
+  if(!q) return text;
+  return text.replace(new RegExp("("+esc(q)+")","ig"),"<mark>$1</mark>");
+}
+function runSearch(q){
+  const query = q.trim().toLowerCase();
+  if(!query){ select(active); return; }
+  [...rail.querySelectorAll(".rail-item")].forEach(b=>b.setAttribute("aria-current","false"));
+  const hits=[];
+  DOMAINS.forEach(d=>{
+    d.items.forEach(it=>{
+      if((it[0]+" "+it[1]).toLowerCase().includes(query))
+        hits.push({d,it});
+    });
+  });
+  if(!hits.length){
+    panel.innerHTML='<div class="empty">No responsibilities match “'+q+'”.<br>Try a broader term, or clear the search to browse by domain.</div>';
+    return;
+  }
+  panel.innerHTML =
+    '<div class="panel-head"><h2>Search results</h2></div>'+
+    '<p class="panel-meta">'+hits.length+' match'+(hits.length>1?"es":"")+' for “'+q+'”</p>'+
+    '<ul class="tasks">'+
+      hits.map(h=>
+        '<li class="task"><span class="marker" aria-hidden="true"></span>'+
+        '<div class="t-body"><strong>'+hl(h.it[0],q)+'</strong>'+
+        '<span>'+hl(h.it[1],q)+'</span>'+
+        '<div class="result-domain">'+h.d.code+' · '+h.d.name+'</div></div></li>'
+      ).join("")+
+    '</ul>';
+}
+search.addEventListener("input",e=>runSearch(e.target.value));
+
+document.getElementById("btn-print").addEventListener("click",()=>window.print());
+
+/* init */
+select(0);
+</script>
+</body>
+</html>
